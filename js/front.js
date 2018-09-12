@@ -9,12 +9,12 @@ var osm_all_category_asked = [];
 
 
 // Initialisation de la map
-function osm_poi_init_map(lat , lon , icon) {
+function osm_poi_init_map(lat , lon , icon , zoom) {
 
     osm_poi_main_lat = lat;
     osm_poi_main_lng = lon;
 
-    osm_poi_map = L.map("map").setView([osm_poi_main_lat, osm_poi_main_lng], 11);
+    osm_poi_map = L.map("map").setView([osm_poi_main_lat, osm_poi_main_lng], zoom);
 
     osm_poi_map.scrollWheelZoom.disable();
 
@@ -36,7 +36,7 @@ function osm_poi_init_map(lat , lon , icon) {
     //marker.bindPopup();
 
     osm_poi_markers.push(marker); 
-    osm_poi_fitbounds();
+   
 
 }
 
@@ -115,7 +115,6 @@ function osm_poi_show_poi_nearby(poi_type){
 
   }
 
-   osm_poi_fitbounds();
 
 
 }

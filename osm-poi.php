@@ -3,7 +3,7 @@
 Plugin Name: Open Street Map - POI manager
 Plugin URI: http://www.h2i.fr
 Description: Permet d'afficher sur une map OSM, un marqueur avec des points d'intérets
-Version: 0.1
+Version: 0.2
 Author: Baptiste Lozano
 Contributors: Baptiste Lozano
 Author URI: http://www.h2i.fr
@@ -55,7 +55,7 @@ add_action( 'init', 'osm_poi_init' );
 // ===================== Création du shortcode =====================
 function sc_osm_poi_get_map($atts){
 
-	$OSM_POI_Front 	= new osm_poi\front();
+	// ex : [osm_poi_map lat="45.75" lng="4.85" height="300" zoom="16" zoom-mobile="18"]
 
 	shortcode_atts( array(
 		'height'      => '',
@@ -66,13 +66,39 @@ function sc_osm_poi_get_map($atts){
 	), $atts , 'sc_gaddr_get_map');
 
 	if(!is_array($atts)) $atts = array();
+	
+	// Le shortcode affiche les pois directement
+	$atts["display_pois"] = 1;
 
+	$OSM_POI_Front 	= new osm_poi\front();
 	return $OSM_POI_Front->generate_map($atts);
 
 }
 add_shortcode('osm_poi_map', 'sc_osm_poi_get_map');
 
 
+// ===================== Fonction appelable depuis un thème par exemple =====================
+function osm_poi_get_map($params){
+
+	if(!is_array($params)) $params = array();
+	
+	// La fonction affiche les pois séparément
+	$params["display_pois"] = 0;
+
+	$OSM_POI_Front 	= new osm_poi\front();
+	return $OSM_POI_Front->generate_map($params);
+
+}
+
+
+function test_osm(){
+
+	$params = array("lat" => "45.75" , "lng" => "4.85"  , "height" => "300" , "zoom" => "16" ,  "zoom-mobile" => "18");
+
+	$retour = osm_poi_get_map($params);
+
+}
+//add_action("wp_footer" , "test_osm");
 
 // ===================== Ajout des url & patch JS dans le head de la page =====================
 function osm_poi_add_js_var_in_head(){
@@ -117,6 +143,8 @@ function osm_poi_parse_query($atts){
 	$retour = array();
 	$places_json = json_decode($places_json);
 	foreach($places_json->results as $result){
+
+		if(sizeof($retour) == 10) continue;
 
 		$retour[] = array("name" => $result->name , "vicinity" => $result->vicinity , "lat" => $result->geometry->location->lat , "lng" => $result->geometry->location->lng);
 
