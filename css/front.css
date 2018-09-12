@@ -1,0 +1,40 @@
+.osm-checkbox-poi {
+    margin-bottom: 20px;
+    font-size: 13px;
+    display: inline-table;
+    margin-right: 20px;
+}
+
+.osm-checkbox-poi img {
+    height: 40px;
+    margin-left: 5px;
+}
+
+
+a.osm-title-poi {
+    background-color: #CCC;
+    padding: 5px 20px;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+    display: block;
+    cursor: pointer;
+}
+
+div#osm-checkboxes-poi {
+    background-color: #EEE;
+    padding-top: 10px;
+}
+
+div#osm-checkboxes-poi label{ cursor:pointer; }
+
+
+.program.detail .main-map .interests .item {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6rem;
+    color: #fff;
+    padding: 0 2rem;
+}
