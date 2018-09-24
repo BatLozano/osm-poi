@@ -3,7 +3,7 @@
 Plugin Name: Open Street Map - POI manager
 Plugin URI: http://www.h2i.fr
 Description: Permet d'afficher sur une map OSM, un marqueur avec des points d'intérets
-Version: 0.2
+Version: 1.0
 Author: Baptiste Lozano
 Contributors: Baptiste Lozano
 Author URI: http://www.h2i.fr

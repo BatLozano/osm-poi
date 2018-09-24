@@ -108,7 +108,7 @@ function osm_poi_show_poi_nearby(poi_type){
   else{
 
     for(i=0;i<osm_markers_per_type_place[category_asked].length;i++) {
-    osm_poi_map.removeLayer(osm_markers_per_type_place[category_asked][i]);
+      osm_poi_map.removeLayer(osm_markers_per_type_place[category_asked][i]);
     }  
 
     osm_markers_per_type_place[category_asked] = [];
