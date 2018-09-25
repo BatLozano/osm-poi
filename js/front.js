@@ -7,18 +7,31 @@ var osm_poi_main_lng;
 var osm_markers_per_type_place = [];
 var osm_all_category_asked = [];
 
+var is_zoom_disabled = 0;
 
 // Initialisation de la map
-function osm_poi_init_map(lat , lon , icon , zoom) {
+function osm_poi_init_map(lat , lon , icon , zoom, map_style , disable_zoom) {
 
     osm_poi_main_lat = lat;
     osm_poi_main_lng = lon;
 
-    osm_poi_map = L.map("map").setView([osm_poi_main_lat, osm_poi_main_lng], zoom);
+    osm_poi_map = new L.Map('map');
+    osm_poi_map.setView([osm_poi_main_lat, osm_poi_main_lng], zoom);
+
+
+    is_zoom_disabled = disable_zoom;
+    if(disable_zoom == 1){
+      osm_poi_map.touchZoom.disable();
+      osm_poi_map.doubleClickZoom.disable();
+      osm_poi_map.scrollWheelZoom.disable();
+      osm_poi_map.boxZoom.disable();
+      osm_poi_map.keyboard.disable();
+      jQuery(".leaflet-control-zoom").css("visibility", "hidden");
+    }
 
     osm_poi_map.scrollWheelZoom.disable();
 
-    L.tileLayer.provider("HERE.normalDay", {
+    L.tileLayer.provider(map_style, {
         app_id: "VzgTyDqdfILl99Vb5T70",
         app_code: "FXZ78YtYUmOErRDIB_MTeQ"
     }).addTo(osm_poi_map);          
@@ -42,8 +55,12 @@ function osm_poi_init_map(lat , lon , icon , zoom) {
 
 // Modification des bounds de la map pour voir tous les markers
 function osm_poi_fitbounds() {
-    var group = new L.featureGroup(osm_poi_markers); 
-    osm_poi_map.fitBounds(group.getBounds().pad(0.5)); 
+    
+    if(is_zoom_disabled == 0){
+      var group = new L.featureGroup(osm_poi_markers); 
+      osm_poi_map.fitBounds(group.getBounds()); 
+    }
+    
 }
 
 
@@ -65,10 +82,11 @@ function osm_poi_show_poi_nearby(poi_type){
     // Ajout de la categorie à la liste des categories selectionnées
     osm_all_category_asked.push(poi_type);
 
+    var nb_markers_added = 0;
 
     // Définition du marqueur
     var myIcon = L.icon({
-        iconUrl: path_to_plugin_osm_poi+"/images/pois/marker-"+poi_type+".png",
+        iconUrl: osm_poi_markers_images[poi_type],
         iconSize: [25, 40],
         iconAnchor: [12, 40],
         popupAnchor: [0, -35],
@@ -93,10 +111,12 @@ function osm_poi_show_poi_nearby(poi_type){
 
             });
 
+            nb_markers_added = results.length;
+
         },
         complete: function (data) {
-          osm_poi_fitbounds();
-         }
+          if(nb_markers_added > 0) osm_poi_fitbounds();
+        }
 
     });
 

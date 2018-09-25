@@ -17,7 +17,22 @@ Note : https://github.com/leaflet-extras/leaflet-providers utilisé pour le styl
 define( 'OSM_POI_URL'		, plugins_url('/', __FILE__) );
 define( 'OSM_POI_DIR'		, dirname(__FILE__) );
 
-define( 'OSM_POI_OPTION' , 'osm_poi_list');
+define( 'OSM_POI_LIST' , array(
+		  'grocery_or_supermarket'  => 'Supermarchés',
+		  'restaurant'              => 'Restaurants',
+		  'bakery'                  => 'Boulangeries',
+		  'hospital'                => 'Hopitaux',
+		  'school'                  => 'Ecoles',
+		  'doctor'                  => 'Docteurs',
+		  'parking'                 => 'Parkings',
+		  'subway_station'			=> 'Métros',
+		  'light_rail_station'		=> 'Tramway',
+		  'gym'						=> 'Salle de sport',
+		  'florist'					=> 'Fleuriste',
+		  'pharmacy'				=> 'Pharmacie',
+		  'movie_theater'			=> 'Cinéma',
+		  'bus_station'				=> 'Bus'
+));
 
 // ===================== Autoloader des classes du plugin avec namespace  =====================
 function osm_poi_autoloader( $class_name ) {
@@ -62,6 +77,7 @@ function sc_osm_poi_get_map($atts){
 		'zoom'        => '',
 		'zoom-mobile' => '',
 		'icon'        => '',
+		'disable_zoom' => '',
 
 	), $atts , 'sc_gaddr_get_map');
 
@@ -78,7 +94,7 @@ add_shortcode('osm_poi_map', 'sc_osm_poi_get_map');
 
 
 // ===================== Fonction appelable depuis un thème par exemple =====================
-function osm_poi_get_map($params){
+function osm_poi_get_map($params = array()){
 
 	if(!is_array($params)) $params = array();
 	
@@ -87,6 +103,7 @@ function osm_poi_get_map($params){
 
 	$OSM_POI_Front 	= new osm_poi\front();
 	return $OSM_POI_Front->generate_map($params);
+
 
 }
 
