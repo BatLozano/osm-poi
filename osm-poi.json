@@ -1,0 +1,9 @@
+{
+	"name" : "Open Street Map - POI manager",
+	"version" : "1.1",
+	"author" : "Baptiste Lozano",
+	"download_url" : "http://srvweb.h2i.fr/wordpress-referentiel/plugins/osm-poi.zip",
+	"sections" : {
+		"description" : "Permet d'afficher sur une map OSM, un marqueur avec des points d'intérets"
+	}
+}
