@@ -202,3 +202,37 @@ add_action( 'wp_enqueue_scripts', 'osm_poi_enqueue_scripts' );
 
 
 
+// ===================== Créer le fichier json utile pour les MAJ auto de WP =====================
+function osm_poi_create_json_file_for_this_plugin(){
+
+	if ( ! function_exists( 'get_plugins' ) ) require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	
+	$plugin_folder = get_plugins( '/' . plugin_basename( dirname( __FILE__ ) ) );
+	$plugin_file   = basename( ( __FILE__ ) );
+	$version       = $plugin_folder[$plugin_file]["Version"];
+	
+	$json          = json_encode($plugin_folder[$plugin_file]);
+	
+	$plugin_name   = $plugin_folder[$plugin_file]["TextDomain"];
+	$json_file     = WP_CONTENT_DIR."/plugins/".$plugin_name."/".$plugin_name.".json";
+	
+	$content = '{'."\n".
+    '	"name" : "'.$plugin_folder[$plugin_file]["Name"].'",'."\n".
+    '	"version" : "'.$plugin_folder[$plugin_file]["Version"].'",'."\n".
+    '	"author" : "'.$plugin_folder[$plugin_file]["Author"].'",'."\n".
+    '	"download_url" : "http://srvweb.h2i.fr/wordpress-referentiel/plugins/'.$plugin_name.'.zip",'."\n".
+    '	"sections" : {'."\n".
+        '		"description" : "'.$plugin_folder[$plugin_file]["Description"].'"'."\n".
+    '	}'."\n".
+'}';
+	
+
+	$fp = fopen($json_file , "w+");
+	fputs($fp , $content);
+	fclose($fp);
+	
+	return true;
+
+}
+add_action( 'wp', 'osm_poi_create_json_file_for_this_plugin' );
+
