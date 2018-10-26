@@ -13,6 +13,7 @@ class front{
 		if(empty($params["height"])) 		$params["height"] = "650";
 		if(empty($params["zoom"])) 			$params["zoom"] = "15";
 		if(empty($params["zoom-mobile"])) 	$params["zoom-mobile"] = "17";
+		
 		if(empty($params["icon"])){
 			$attachment_id 	= get_option( 'osm_poi_attachement_main', "" );
 			$img_src 		= wp_get_attachment_url($attachment_id);
@@ -21,6 +22,7 @@ class front{
 			$params["icon"] = $img_src;
 		}
 		$params["disable_zoom"] = (isset($params["disable_zoom"])) ? intval($params["disable_zoom"]) : "0";
+
 
 
 		// Zoom (mobile ou non)
@@ -45,9 +47,8 @@ class front{
 			$geocoding_result = get_option($adresse_geocoding_option , false);
 			if($geocoding_result === false){
 
-				$remote_request = wp_remote_request("http://open.mapquestapi.com/geocoding/v1/address?key=".$mapquest_key."&location=".$params["address"]);
-				$geocoding_result = wp_remote_retrieve_body($remote_request);
-
+				$remote_request 	= wp_remote_request("http://open.mapquestapi.com/geocoding/v1/address?key=".$mapquest_key."&location=".$params["address"]);
+				$geocoding_result 	= wp_remote_retrieve_body($remote_request);
 
 				update_option($adresse_geocoding_option , $geocoding_result);
 
@@ -63,11 +64,22 @@ class front{
 		// Variable de retour
 		$map = '';
 
+		// Calcul de la taille du marqueur de base
+		$ex 	= explode("/wp-content/" , $params["icon"]);
+		$main_marker_path = WP_CONTENT_DIR."/".$ex[1];
+		list($w, $h) = getimagesize($main_marker_path);
 		$map .= "<script>
-					window.onload = function(){
-					    osm_poi_init_map('".json_encode($params)."'); 
-					}
-					</script>";
+				var main_marker_path_height = ".$h.";
+				var main_marker_path_width = ".$w.";
+				</script>";
+		
+
+		// Initialisation de la map
+		$map .= "<script>
+				window.onload = function(){
+					osm_poi_init_map('".json_encode($params)."'); 
+				}
+				</script>";
 
 
 		// Affichage de la map
@@ -122,8 +134,6 @@ class front{
 		}
 		$map .= "</script>";
 	
-
-
 
 		// Gestions des POIS
 		$legende_pois = "";

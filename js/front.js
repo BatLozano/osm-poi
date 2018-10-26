@@ -15,8 +15,6 @@ function osm_poi_init_map(params) {
 
     map_params = JSON.parse(params);
 
-    console.log(map_params);
-
     osm_poi_main_lat = map_params["lat"];
     osm_poi_main_lng = map_params["lng"];
 
@@ -43,9 +41,9 @@ function osm_poi_init_map(params) {
 
     var myIcon = L.icon({
         iconUrl: map_params["icon"],
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -35],
+        iconSize: [main_marker_path_width, main_marker_path_height],
+        iconAnchor: [parseInt(main_marker_path_width/2), main_marker_path_height],
+        popupAnchor: [-parseInt(main_marker_path_width/6), -main_marker_path_height],
     });
 
 
@@ -83,13 +81,19 @@ function osm_poi_show_poi_nearby(poi_type){
 
         var nb_markers_added = 0;
 
+        // Récupération de la hauteur / largeur du marqueur
+        var width   = parseInt(osm_poi_markers_size[poi_type]["w"]);
+        var height  = parseInt(osm_poi_markers_size[poi_type]["h"]);
+
         // Définition du marqueur
         var myIcon = L.icon({
             iconUrl: osm_poi_markers_images[poi_type],
-            iconSize: [25, 40],
-            iconAnchor: [12, 40],
-            popupAnchor: [0, -35],
+            iconSize: [width, height],
+            iconAnchor: [parseInt(width/2), height],
+            popupAnchor: [-parseInt(width/6), -height],
         });
+
+        console.log(myIcon);
 
 
         jQuery.ajax({

@@ -116,7 +116,7 @@ function test_osm(){
 	printr($retour);
 
 }
-add_action("wp_footer" , "test_osm");
+//add_action("wp_footer" , "test_osm");
 
 // ===================== Ajout des url & patch JS dans le head de la page =====================
 function osm_poi_add_js_var_in_head(){
