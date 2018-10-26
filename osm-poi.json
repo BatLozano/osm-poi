@@ -1,6 +1,6 @@
 {
 	"name" : "Open Street Map - POI manager",
-	"version" : "1.1",
+	"version" : "1.2",
 	"author" : "Baptiste Lozano",
 	"download_url" : "http://srvweb.h2i.fr/wordpress-referentiel/plugins/osm-poi.zip",
 	"sections" : {
