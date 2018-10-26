@@ -24,8 +24,10 @@ class front{
 
 
 		// Zoom (mobile ou non)
-		$zoom = (wp_is_mobile()) ? $params["zoom-mobile"] : $params["zoom"];
+		$params["zoom"] = (wp_is_mobile()) ? $params["zoom-mobile"] : $params["zoom"];
 
+		// Style
+		$params["style"] = get_option("osm_poi_map_style");
 
 		// Si on à passé une adresse à géocoder
 		if(!empty($params["address"])){
@@ -53,21 +55,17 @@ class front{
 
 			$geocoding_result = json_decode($geocoding_result);
 			$lat_lng = $geocoding_result->results[0]->locations[0]->displayLatLng;
-			$lat = $lat_lng->lat;
-			$lng = $lat_lng->lng;
+			$params["lat"] = $lat_lng->lat;
+			$params["lng"] = $lat_lng->lng;
 
 		}
-		else{
-			$lat = $params["lat"];
-			$lng = $params["lng"];
-		}
-		
 
 		// Variable de retour
 		$map = '';
 
-		$map .= "<script>window.onload = function(){
-					    osm_poi_init_map('".$lat."' , '".$lng."' , '".$params["icon"]."' , '".$zoom."' , '".get_option("osm_poi_map_style")."' , '".$params["disable_zoom"]."'); 
+		$map .= "<script>
+					window.onload = function(){
+					    osm_poi_init_map('".json_encode($params)."'); 
 					}
 					</script>";
 
@@ -86,18 +84,44 @@ class front{
 
 		// Calcul des images de chaque poi
 		$imgs_pois = array();
-		foreach(OSM_POI_LIST as $category_name => $libelle){
-			$attachment_id 	= get_option( 'osm_poi_attachement_'.$category_name, "" );
-			$img_src 		= wp_get_attachment_url($attachment_id);
-        	if($img_src === false) $img_src = OSM_POI_URL."images/pois/marker-".$category_name.".png";
-
-			$imgs_pois[$category_name] = $img_src;
-		}
 
 		$map .= "<script>";
 		$map .= "var osm_poi_markers_images = [];\n";
-		foreach($imgs_pois as $category_name => $img) $map .= "osm_poi_markers_images['".$category_name."'] = '".$img."';\n";
+		$map .= "var osm_poi_markers_size = [];\n";
+
+		foreach(OSM_POI_LIST as $category_name => $libelle){
+			
+			$attachment_id 	= get_option( 'osm_poi_attachement_'.$category_name, "" );
+			$img_url 		= wp_get_attachment_url($attachment_id);
+			
+			if($img_url === false){
+				$img 	 = "images/pois/marker-".$category_name.".png";
+				$img_url = OSM_POI_URL.$img;
+				$img_path = OSM_POI_DIR."/".$img;
+			}
+			else{
+				$ex 	= explode("/wp-content/" , $img_url);
+				$img 	= $ex[1];
+				$img_path = WP_CONTENT_DIR."/".$img;
+			}
+
+
+			if(file_exists($img_path)){
+
+				$imgs_pois[$category_name] = $img_url;
+			
+				// Url de l'image du marker
+				$map .= "osm_poi_markers_images['".$category_name."'] = '".$img_url."';\n";
+				
+				// Taille de l'image du marqueur
+				list($w, $h) = getimagesize($img_path);
+				$map .= "osm_poi_markers_size['".$category_name."'] = {'h' : '".$h."' , 'w' : '".$h."'};\n";
+
+			}
+
+		}
 		$map .= "</script>";
+	
 
 
 
@@ -113,13 +137,9 @@ class front{
 						<div id="osm-checkboxes-poi" class="collapse">';
 
 
-		foreach(OSM_POI_LIST as $category_name => $libelle){
-
-			$legende_pois .= '	<div class="osm-checkbox-poi" id="osm-checkbox-poi-'.$category_name.'">
-								<input id="'.$category_name.'" type="checkbox" name="'.$category_name.'" onclick=\'osm_poi_show_poi_nearby("'.$category_name.'")\'>
-								<label for="'.$category_name.'"><img src="'.$imgs_pois[$category_name].'" /> '.$libelle.'</label>
-							</div>';
-
+		$libelle_pois = OSM_POI_LIST;
+		foreach($imgs_pois as $category_name => $img_url){
+			$legende_pois .= '<div class="osm-checkbox-poi"><span onclick=\'osm_poi_show_poi_nearby("'.$category_name.'")\'><img src="'.$imgs_pois[$category_name].'" /> '.$libelle_pois[$category_name].'</span></div>';
 		}
 
 		$legende_pois .= '	<div style="clear:both"></div>

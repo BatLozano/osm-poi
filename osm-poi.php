@@ -113,9 +113,10 @@ function test_osm(){
 	$params = array("lat" => "45.75" , "lng" => "4.85"  , "height" => "300" , "zoom" => "16" ,  "zoom-mobile" => "18");
 
 	$retour = osm_poi_get_map($params);
+	printr($retour);
 
 }
-//add_action("wp_footer" , "test_osm");
+add_action("wp_footer" , "test_osm");
 
 // ===================== Ajout des url & patch JS dans le head de la page =====================
 function osm_poi_add_js_var_in_head(){
